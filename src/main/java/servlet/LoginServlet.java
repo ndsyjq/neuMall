@@ -45,7 +45,9 @@ public class LoginServlet extends HttpServlet {
 
         // 2. 用户认证
         User user = userService.authenticate(username, password);
+
         if (user != null&& !user.isLocked()) {
+            // 登录成功时存入 Session（推荐）
             session.setAttribute("user", user);
             response.sendRedirect(request.getContextPath() + "/home.jsp");
         } else {

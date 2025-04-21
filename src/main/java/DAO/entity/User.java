@@ -1,6 +1,6 @@
 package DAO.entity;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 // User.java
 public class User {
@@ -14,7 +14,7 @@ public class User {
     private String nickname;
     private String gender;
     private String avatar;
-    private boolean isAdmin;
+    private boolean admin;
     private Timestamp createdAt;
 
 
@@ -31,7 +31,45 @@ public class User {
         this.loginAttempts = loginAttempts;
         this.nickname = "";
     }
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
 
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
+    }
     /**
      * 获取
      * @return id

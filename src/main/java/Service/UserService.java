@@ -31,6 +31,18 @@ public class UserService {
         // 4. 插入数据库
         userDao.createUser(user);
     }
+    public void createUserByAdmin(User user) {
+        if (userDao.findByUsername(user.getUsername()) != null) {
+            throw new IllegalArgumentException("用户名已存在");
+        }
+        // 2. 检查邮箱是否已存在
+        if (userDao.findByEmail(user.getEmail()) != null) {
+            throw new IllegalArgumentException("邮箱已被注册");
+        }
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        userDao.createUserByAdmin(user);
+    }
     public User authenticate(String username, String password) {
         User user = userDao.findByUsername(username);
         if (user == null) {
