@@ -45,10 +45,11 @@
             <artifactId>slf4j-api</artifactId>
             <version>2.0.7</version>
         </dependency>
+        <!-- JSTL 依赖 -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.12</version>
+            <version>1.5.13</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>

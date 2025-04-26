@@ -2,9 +2,9 @@ package flyway;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import javax.sql.DataSource;
-import flyway.FlywayConfig;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 public class DataSourceConfig {
     private static DataSource dataSource;

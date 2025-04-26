@@ -1,10 +1,10 @@
 package DAO;// UserDaoImpl.java
-import DAO.UserDao;
+
+import DAO.entity.Role;
 import DAO.entity.User;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import javax.sql.DataSource;
 import java.util.List;
@@ -140,5 +140,22 @@ public class UserDaoImpl implements UserDao {
         } catch (EmptyResultDataAccessException e) {
             return null; // 用户不存在时返回null
         }
+    }
+    // DAO/UserDaoImpl.java
+    private static final RowMapper<Role> ROLE_ROW_MAPPER = (rs, rowNum) ->
+            new Role(rs.getLong("id"), rs.getString("role_name"), rs.getString("description"));
+
+    @Override
+    public List<Role> findRolesByUserId(Long userId) {
+        String sql = "SELECT r.* FROM roles r " +
+                "JOIN user_roles ur ON r.id = ur.role_id " +
+                "WHERE ur.user_id = ?";
+        return jdbcTemplate.query(sql, ROLE_ROW_MAPPER, userId);
+    }
+
+    @Override
+    public void saveUserRole(Long userId, Long roleId) {
+        String sql = "INSERT INTO user_roles (user_id,role_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql, userId, roleId);
     }
 }

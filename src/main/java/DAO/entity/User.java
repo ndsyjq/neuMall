@@ -1,6 +1,7 @@
 package DAO.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 // User.java
 public class User {
@@ -16,6 +17,7 @@ public class User {
     private String avatar;
     private boolean admin;
     private Timestamp createdAt;
+    private List<Role> roles;
 
 
     public User() {
@@ -31,10 +33,12 @@ public class User {
         this.loginAttempts = loginAttempts;
         this.nickname = "";
     }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
-
+    public List<Role> getRoles() {return roles;}
+    public void setRoles(List<Role> roles) {this.roles = roles;}
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }

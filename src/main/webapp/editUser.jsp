@@ -93,7 +93,11 @@
                 <label class="form-label">头像链接</label>
                 <input type="text" class="form-control" name="avatar" value="${user.avatar}">
             </div>
-
+            <c:if test="${not hasRole('ROLE_ADMIN')}">
+    <!-- 隐藏锁定状态和管理员角色选项 -->
+            <input type="hidden" name="locked" value="${user.locked}">
+            <input type="hidden" name="isAdmin" value="false">
+            </c:if>
             <!-- 管理员权限 -->
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" name="isAdmin"
