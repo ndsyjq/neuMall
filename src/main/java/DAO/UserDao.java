@@ -17,8 +17,10 @@ public interface UserDao {
     List<User> searchUsers(String keyword);
     void updateUser(User user);
     void deleteUser(Long userId);
+    void deleteUserRoles(Long userId); // 删除用户的所有角色
     User getUserById(Long id);
-    void createUserByAdmin(User user);
+    Long createUserByAdmin(User user);
     List<Role> findRolesByUserId(Long userId); // 获取用户角色列表
     void saveUserRole(Long userId, Long roleId); // 保存用户角色关联
+    List<Role> getAllRoles(); // 获取所有角色
 }

@@ -14,7 +14,6 @@ import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +54,14 @@ public class UserManagementServlet extends HttpServlet {
                 request.getRequestDispatcher("/home.jsp").forward(request, response);
                 return;
             }
-            request.setAttribute("user", user); // 将用户信息存入请求
+            request.setAttribute("user", user); // 将用户信息存入请求，改为currentUser
             request.getRequestDispatcher("/editUser.jsp").forward(request, response); // 转发到编辑页面
             return;
         }
 
+        // 在转发到编辑页面前加载所有角色
+        List<DAO.entity.Role> roles = userService.getUserDao().getAllRoles();
+        request.setAttribute("roles", roles);
         // 原有删除和搜索逻辑（保持不变）
         if (action != null && action.equals("delete")) {
             Long userId = Long.parseLong(request.getParameter("id"));
@@ -97,8 +99,17 @@ public class UserManagementServlet extends HttpServlet {
                 user.setGender(request.getParameter("gender"));
                 user.setAvatar(request.getParameter("avatar"));
                 user.setAdmin(request.getParameter("isAdmin") != null);
-                // 假设前端通过参数传递角色 ID（例如管理员角色 ID 为 1）
-                List<Long> roleIds = Arrays.asList(1L); // 示例，实际需根据前端逻辑获取
+                // 从请求中获取角色ID列表
+                String[] roleIdParams = request.getParameterValues("roleIds");
+                List<Long> roleIds = new java.util.ArrayList<>();
+                if (roleIdParams != null) {
+                    for (String roleId : roleIdParams) {
+                        roleIds.add(Long.parseLong(roleId));
+                    }
+                } else {
+                    // 默认为普通商户角色（ID为2）
+                    roleIds.add(2L);
+                }
                 userService.createUserByAdmin(user, roleIds);
                 response.sendRedirect(request.getContextPath() + "/userManagement");
             } catch (Exception e) {
@@ -150,7 +161,7 @@ public class UserManagementServlet extends HttpServlet {
             // 3. 校验失败处理
             if (!errorMessage.isEmpty()) {
                 request.setAttribute("errorMessage", errorMessage); // 传递错误信息到页面
-                request.setAttribute("user", userService.getUserDao().getUserById(userId)); // 回显原始数据
+                request.setAttribute("User", userService.getUserDao().getUserById(userId)); // 回显原始数据，改为currentUser
                 request.getRequestDispatcher("/editUser.jsp").forward(request, response);
                 return;
             }
@@ -172,11 +183,35 @@ public class UserManagementServlet extends HttpServlet {
             user.setNickname(request.getParameter("nickname"));
             user.setGender(gender);
             user.setAvatar(request.getParameter("avatar"));
-            user.setAdmin(request.getParameter("isAdmin") != null);
-            user.setLocked("on".equals(request.getParameter("locked")));
+            
+            // 只有管理员可以修改管理员权限和锁定状态
+            User currentUser = (User) session.getAttribute("user");
+            if (currentUser != null && currentUser.isAdmin()) {
+                user.setAdmin(request.getParameter("isAdmin") != null);
+                user.setLocked("on".equals(request.getParameter("locked")));
+            } else {
+                // 非管理员保持原有权限和锁定状态
+                existingUser = userService.getUserDao().getUserById(userId);
+                user.setAdmin(existingUser.isAdmin());
+                user.setLocked(existingUser.isLocked());
+            }
 
             // 6. 调用更新方法
             userService.getUserDao().updateUser(user);
+
+            // 7. 更新用户角色（仅管理员可操作）
+            if (hasRole(session, "ROLE_ADMIN")) {
+                // 先删除用户现有角色
+                userService.getUserDao().deleteUserRoles(userId);
+                
+                // 从请求中获取新的角色ID列表
+                String[] roleIdParams = request.getParameterValues("roleIds");
+                if (roleIdParams != null) {
+                    for (String roleId : roleIdParams) {
+                        userService.getUserDao().saveUserRole(userId, Long.parseLong(roleId));
+                    }
+                }
+            }
             response.sendRedirect(request.getContextPath() + "/userManagement");
         }
     }

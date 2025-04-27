@@ -93,25 +93,24 @@
                 <label class="form-label">头像链接</label>
                 <input type="text" class="form-control" name="avatar" value="${user.avatar}">
             </div>
-            <c:if test="${not hasRole('ROLE_ADMIN')}">
-    <!-- 隐藏锁定状态和管理员角色选项 -->
-            <input type="hidden" name="locked" value="${user.locked}">
-            <input type="hidden" name="isAdmin" value="false">
+            
+            <!-- 检查当前登录用户是否为管理员 -->
+            <c:if test="${sessionScope.user.admin}">
+                <!-- 管理员权限 -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" name="isAdmin"
+                    ${user.isAdmin() ? 'checked' : ''}>
+                    <label class="form-check-label">设为管理员</label>
+                </div>
+
+                <!-- 锁定状态 -->
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" name="locked"
+                    ${user.isLocked() ? 'checked' : ''}>
+                    <label class="form-check-label">锁定用户</label>
+                </div>
             </c:if>
-            <!-- 管理员权限 -->
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" name="isAdmin"
-                ${user.isAdmin() ? 'checked' : ''}>
-                <label class="form-check-label">设为管理员</label>
-            </div>
-
-            <!-- 锁定状态 -->
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" name="locked"
-                ${user.isLocked() ? 'checked' : ''}>
-                <label class="form-check-label">锁定用户</label>
-            </div>
-
+            
             <!-- 密码（非必填，留空则不修改） -->
             <div class="mb-3">
                 <label class="form-label">新密码</label>

@@ -52,6 +52,9 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/home.jsp");
         } else {
             User lockedUser = userService.getUserDao().findByUsername(username);
+            if(lockedUser==null){
+                lockedUser=userService.getUserDao().findByEmail(username);
+            }
             if (lockedUser != null && lockedUser.isLocked()) {
                 request.setAttribute("error", "账号已被锁定，请联系管理员");
             } else {

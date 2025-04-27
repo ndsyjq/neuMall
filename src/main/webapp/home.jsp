@@ -71,6 +71,7 @@
                         <th>手机号</th>
                         <th>昵称</th>
                         <th>状态</th>
+                        <th>身份</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -87,12 +88,24 @@
                                 </span>
                             </td>
                             <td>
-                                <c:if test="${user.admin}">
+                                <c:choose>
+                                    <c:when test="${userItem.admin}">
+                                        <span class="badge bg-primary">管理员</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="badge bg-secondary">普通用户</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:if test="${user.admin||user.id==userItem.id}">
                                     <!-- 原编辑按钮可能缺少链接或参数，修改为以下形式 -->
                                         <a href="${pageContext.request.contextPath}/userManagement?action=edit&id=${userItem.id}"
                                        class="btn btn-sm btn-primary me-1">
                                         <i class="bi bi-pencil-square"></i> 编辑
                                     </a>
+                                </c:if>
+                                <c:if test="${user.admin}">
                                     <a href="${pageContext.request.contextPath}/userManagement?action=delete&id=${userItem.id}"
                                        class="btn btn-sm btn-danger"
                                        onclick="return confirm('确定要删除该用户吗？')">

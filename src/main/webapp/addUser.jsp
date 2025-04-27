@@ -134,7 +134,7 @@
                     out.println("showErrorModal('" + error.replace("'", "\\'") + "');");
                 }
             %>
-        });
+        }); // 关闭DOMContentLoaded事件监听器
     </script>
 </body>
 </html>

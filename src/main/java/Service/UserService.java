@@ -44,8 +44,8 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-        userDao.createUserByAdmin(user);
-        roleIds.forEach(roleId -> userDao.saveUserRole(user.getId(), roleId));
+        Long a=userDao.createUserByAdmin(user);
+        roleIds.forEach(roleId -> userDao.saveUserRole(a, roleId));
     }
     public User authenticate(String username, String password) {
         User user = userDao.findByUsername(username);
